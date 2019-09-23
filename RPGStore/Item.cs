@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RPGStore
 {
@@ -39,19 +40,28 @@ namespace RPGStore
             return 0;
         }
 
-        public void ProcessInput(string input)
+        public void BuyItem(string input, int fundsToSubtract, int fundsToAdd)
         {
             Console.WriteLine("Would you like to buy this item? (Yes/No)");
             input = Console.ReadLine();
             if (input.ToLower() == "yes")
             {
                 //Console.WriteLine("Whoops! Can't figure out how to reference functions from 'Game' in 'Item'");
-                
+                fundsToSubtract -= _cost;
+                fundsToAdd += _cost;
             }
             else if (input.ToLower() == "no")
             {
                 return;
             }
+        }
+
+        public virtual void LoadItem(StreamReader reader)
+        {
+            _name = reader.ReadLine();
+            _desc = reader.ReadLine();
+            _cost = Convert.ToInt32(reader.ReadLine());
+            reader.ReadLine();
         }
     }
 }

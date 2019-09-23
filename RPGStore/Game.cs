@@ -31,19 +31,9 @@ namespace RPGStore
             playerFunds = newPlayerFunds;
         }
 
-        //need these two functions to do sales
-        public int GetPlayerFunds()
-        {
-            return playerFunds;
-        }
-
-        public int GetShopFunds()
-        {
-            return shopFunds;
-        }
-
         public void ProcessInput()
         {
+            LoadState("save.txt");
             bool satisfied = false;
             string input;
             while (!satisfied)
@@ -62,7 +52,8 @@ namespace RPGStore
                         if (input.ToLower() == shopInventory[e].GetName().ToLower())
                         {
                             shopInventory[e].PrintItem();
-                            shopInventory[e].ProcessInput(input);
+                            shopInventory[e].BuyItem(input, playerFunds, shopFunds);
+                            
                         }
                     }
                 }
@@ -90,11 +81,17 @@ namespace RPGStore
             writer.WriteLine(playerFunds);
             foreach (Item i in shopInventory)
             {
-                writer.WriteLine(i);
+                writer.WriteLine(i.GetName());
+                writer.WriteLine(i.GetDesc());
+                writer.WriteLine(i.GetCost());
+                writer.WriteLine(i.GetAttackModifier());
             }
             foreach (Item i in playerInventory)
             {
-                writer.WriteLine(i);
+                writer.WriteLine(i.GetName());
+                writer.WriteLine(i.GetDesc());
+                writer.WriteLine(i.GetCost());
+                writer.WriteLine(i.GetAttackModifier());
             }
             writer.Close();
         }
@@ -106,7 +103,20 @@ namespace RPGStore
                 StreamReader reader = new StreamReader(path);
                 shopFunds = Convert.ToInt32(reader.ReadLine());
                 playerFunds = Convert.ToInt32(reader.ReadLine());
+                for (int i = 0; i < shopInventory.Length; i++)
+                {
+                    shopInventory[i].LoadItem(reader);
+                }
+                for (int i = 0; i < playerInventory.Length; i++)
+                {
+                    playerInventory[i].LoadItem(reader);
+                }
             }
+        }
+
+        public void ItemTransfer(int index, Item[] sender, Item[] receiver)
+        {
+
         }
     }
 }

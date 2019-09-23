@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RPGStore
 {
@@ -29,6 +30,14 @@ namespace RPGStore
             Console.WriteLine(_desc);
             Console.WriteLine("Attack Value: " + _attackModifier);
             Console.WriteLine("Cost: " + _cost);
+        }
+
+        public override void LoadItem(StreamReader reader)
+        {
+            _name = reader.ReadLine();
+            _desc = reader.ReadLine();
+            _cost = Convert.ToInt32(reader.ReadLine());
+            _attackModifier = Convert.ToInt32(reader.ReadLine());
         }
     }
 }
