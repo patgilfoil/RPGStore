@@ -18,6 +18,11 @@ namespace RPGStore
             _attackModifier = AttackValue;
         }
 
+        public override int GetAttackModifier()
+        {
+            return _attackModifier;
+        }
+
         public override void PrintItem()
         {
             Console.WriteLine("Name: " + _name);

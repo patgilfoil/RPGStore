@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RPGStore
 {
@@ -30,6 +31,17 @@ namespace RPGStore
             playerFunds = newPlayerFunds;
         }
 
+        //need these two functions to do sales
+        public int GetPlayerFunds()
+        {
+            return playerFunds;
+        }
+
+        public int GetShopFunds()
+        {
+            return shopFunds;
+        }
+
         public void ProcessInput()
         {
             bool satisfied = false;
@@ -37,7 +49,7 @@ namespace RPGStore
             while (!satisfied)
             {
                 Console.WriteLine("Welcome to the Item Shop!");
-                Console.WriteLine("(View Item/Sell Item)");
+                Console.WriteLine("(View Item/Sell Item/Exit Shop)");
                 input = Console.ReadLine();
                 //now we start checking for their input
                 if (input.ToLower() == "view item" || input.ToLower() == "view")
@@ -45,22 +57,20 @@ namespace RPGStore
                     Console.WriteLine("Which item?");
                     PrintShopInventory();
                     input = Console.ReadLine();
-                    if (input.ToLower() == claymore.GetName().ToLower())
+                    for (int e = 0; e < shopInventory.Length; e++)
                     {
-                        claymore.PrintItem();
+                        if (input.ToLower() == shopInventory[e].GetName().ToLower())
+                        {
+                            shopInventory[e].PrintItem();
+                            shopInventory[e].ProcessInput(input);
+                        }
                     }
-                    else if (input.ToLower() == rapier.GetName().ToLower())
-                    {
-                        rapier.PrintItem();
-                    }
-                    else if (input.ToLower() == healPotion.GetName().ToLower())
-                    {
-                        healPotion.PrintItem();
-                    }
-                    else if (input.ToLower() == superPotion.GetName().ToLower())
-                    {
-                        superPotion.PrintItem();
-                    }
+                }
+                else if (input.ToLower() == "exit shop" || input.ToLower() == "exit")
+                {
+                    SaveState("save.txt");
+                    Console.WriteLine("Thanks for stopping by!");
+                    return;
                 }
             }
         }
@@ -70,6 +80,32 @@ namespace RPGStore
             foreach (Item i in shopInventory)
             {
                 Console.WriteLine(i.GetName());
+            }
+        }
+
+        public void SaveState(string path)
+        {
+            StreamWriter writer = File.AppendText(path);
+            writer.WriteLine(shopFunds);
+            writer.WriteLine(playerFunds);
+            foreach (Item i in shopInventory)
+            {
+                writer.WriteLine(i);
+            }
+            foreach (Item i in playerInventory)
+            {
+                writer.WriteLine(i);
+            }
+            writer.Close();
+        }
+
+        public void LoadState(string path)
+        {
+            if (File.Exists(path))
+            {
+                StreamReader reader = new StreamReader(path);
+                shopFunds = Convert.ToInt32(reader.ReadLine());
+                playerFunds = Convert.ToInt32(reader.ReadLine());
             }
         }
     }
