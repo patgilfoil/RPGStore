@@ -40,19 +40,44 @@ namespace RPGStore
             return 0;
         }
 
-        public void BuyItem(string input, int fundsToSubtract, int fundsToAdd)
+        public bool ProcessBuyItem(string input)
         {
             Console.WriteLine("Would you like to buy this item? (Yes/No)");
             input = Console.ReadLine();
             if (input.ToLower() == "yes")
             {
                 //Console.WriteLine("Whoops! Can't figure out how to reference functions from 'Game' in 'Item'");
-                fundsToSubtract -= _cost;
-                fundsToAdd += _cost;
+                return true;
             }
             else if (input.ToLower() == "no")
             {
-                return;
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("I can't understand what you're talking about.");
+                return false;
+            }
+        }
+
+        public bool ProcessSellItem(string input)
+        {
+            double sellCost = _cost * 0.85;
+            Console.WriteLine("Would you be interested in selling me this item for "+sellCost+"?");
+            input = Console.ReadLine();
+            if (input.ToLower() == "yes")
+            {
+                //Console.WriteLine("Whoops! Can't figure out how to reference functions from 'Game' in 'Item'");
+                return true;
+            }
+            else if (input.ToLower() == "no")
+            {
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("I can't understand what you're talking about.");
+                return false;
             }
         }
 
