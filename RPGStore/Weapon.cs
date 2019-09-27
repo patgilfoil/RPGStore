@@ -9,6 +9,7 @@ namespace RPGStore
 {
     class Weapon : Item
     {
+        //private int for attack modifiers, a value exclusive to weapons
         private int _attackModifier = 0;
 
         public Weapon(string Name, string Description, int Cost, int AttackValue)
@@ -18,12 +19,12 @@ namespace RPGStore
             _cost = Cost;
             _attackModifier = AttackValue;
         }
-
+        //attack modifier refernce for saving the game
         public override int GetAttackModifier()
         {
             return _attackModifier;
         }
-
+        //item print override for weapons that displays the attack modifier
         public override void PrintItem()
         {
             Console.WriteLine("Name: " + _name);
@@ -31,7 +32,14 @@ namespace RPGStore
             Console.WriteLine("Attack Value: " + _attackModifier);
             Console.WriteLine("Cost: " + _cost);
         }
-
+        public override void SaveItem(StreamWriter writer)
+        {
+            writer.WriteLine(_name);
+            writer.WriteLine(_desc);
+            writer.WriteLine(_cost);
+            writer.WriteLine(_attackModifier);
+        }
+        //item loader override for weapons to include the attack modifier when loading up a save
         public override void LoadItem(StreamReader reader)
         {
             _name = reader.ReadLine();

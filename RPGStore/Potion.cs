@@ -8,6 +8,7 @@ namespace RPGStore
 {
     class Potion : Item
     {
+        //item type reference for potions, there's no necessity for just a "plain" item
         public Potion(string Name, string Description, int Cost)
         {
             _name = Name;
