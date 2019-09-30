@@ -42,6 +42,7 @@ namespace RPGStore
         //function to return a bool that confirms the user's desire to purchase an item
         public bool ProcessBuyItem(string input)
         {
+            Console.WriteLine();
             Console.WriteLine("Would you like to buy this item? (Yes/No)");
             input = Console.ReadLine();
             if (input.ToLower() == "yes")
@@ -55,6 +56,7 @@ namespace RPGStore
             }
             else
             {
+                Console.WriteLine();
                 Console.WriteLine("I can't understand what you're talking about.");
                 return false;
             }
@@ -63,7 +65,9 @@ namespace RPGStore
         //with the exception of the text that shows the item's selling value
         public bool ProcessSellItem(string input)
         {
+            //all items are sold at 85% of their original price
             double sellCost = _cost * 0.85;
+            Console.WriteLine();
             Console.WriteLine("Would you be interested in selling me this item for "+Convert.ToInt32(sellCost)+"? (Yes/No)");
             input = Console.ReadLine();
             if (input.ToLower() == "yes")
@@ -77,10 +81,12 @@ namespace RPGStore
             }
             else
             {
+                Console.WriteLine();
                 Console.WriteLine("I can't understand what you're talking about.");
                 return false;
             }
         }
+        //virtual function to save items when exiting the program, overridden for weapons
         public virtual void SaveItem(StreamWriter writer)
         {
             writer.WriteLine(_name);
@@ -88,7 +94,7 @@ namespace RPGStore
             writer.WriteLine(_cost);
         }
 
-        //virtual function to lad items when loading saves, overridden for weapons
+        //virtual function to load items when loading saves, overridden for weapons
         public virtual void LoadItem(StreamReader reader)
         {
             _name = reader.ReadLine();

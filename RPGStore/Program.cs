@@ -10,10 +10,10 @@ namespace RPGStore
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("Whoops! Nothing yet!");
-
             Game game = new Game();
             game.ProcessInput();
+            Console.ReadKey();
+            Console.WriteLine("After exiting, you wonder if you will visit again, and if such, what new items he will have.");
             Console.ReadKey();
         }
     }

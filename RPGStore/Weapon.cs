@@ -32,6 +32,7 @@ namespace RPGStore
             Console.WriteLine("Attack Value: " + _attackModifier);
             Console.WriteLine("Cost: " + _cost);
         }
+        //item save override for weapons
         public override void SaveItem(StreamWriter writer)
         {
             writer.WriteLine(_name);
