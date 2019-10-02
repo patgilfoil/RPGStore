@@ -65,8 +65,14 @@ namespace RPGStore
                         {
                             //display item attributes (name, cost, etc.)
                             shopInventory[e].PrintItem();
+                            bool bought = shopInventory[e].ProcessBuyItem(input);
                             //if the users says yes to buying the item
-                            if (shopInventory[e].ProcessBuyItem(input) == true)
+                            if (bought == true && playerFunds < shopInventory[e].GetCost())
+                            {
+                                //dont make a transaction if the player has no money
+                                Console.WriteLine("'You're quite low on cash to pay for this.'");
+                            }
+                            else if (bought == true)
                             {
                                 //take the cost of the item, subtract it from the player's funds
                                 playerFunds -= shopInventory[e].GetCost();
@@ -83,32 +89,49 @@ namespace RPGStore
                 //selling items
                 else if (input.ToLower() == "sell item" || input.ToLower() == "sell")
                 {
-                    //show the player inventory, then read next line for input
-                    Console.WriteLine();
-                    Console.WriteLine("'Let's have a look-see at your inventory shall we?'");
-                    PrintInventory(playerInventory);
-                    input = Console.ReadLine();
-                    //same item lookup method as buying except with player inventory
-                    for (int e = 0; e < playerInventory.Length; e++)
+                    if (playerInventory.Length == 0)
                     {
-                        //still looks for exact spelling
-                        if (input.ToLower() == playerInventory[e].GetName().ToLower())
+                        Console.WriteLine();
+                        //prints this if you have nothing in your inventory
+                        Console.WriteLine("'My friend you have nothing!'");
+                        satisfied = false;
+                    }
+                    else
+                    {
+                        //show the player inventory, then read next line for input
+                        Console.WriteLine();
+                        Console.WriteLine("'Let's have a look-see at your inventory shall we?'");
+                        SortPlayerInventoryByCost(playerInventory);
+                        PrintInventory(playerInventory);
+                        input = Console.ReadLine();
+                        //same item lookup method as buying except with player inventory
+                        for (int e = 0; e < playerInventory.Length; e++)
                         {
-                            //show item attributes blahblahblah
-                            playerInventory[e].PrintItem();
-                            //ask if they want to sell for 85% of the original price
-                            if (playerInventory[e].ProcessSellItem(input) == true)
+                            //still looks for exact spelling
+                            if (input.ToLower() == playerInventory[e].GetName().ToLower())
                             {
-                                //make a new double that takes the cost of the chosen item 
-                                //then reduces it to 85% of its original value
-                                double sellCost = Convert.ToDouble(playerInventory[e].GetCost()) * 0.85;
-                                //transaction
-                                shopFunds -= Convert.ToInt32(sellCost);
-                                playerFunds += Convert.ToInt32(sellCost);
-                                //goods transfer, economics definition woo
-                                ItemBuyback(e);
-                                Console.WriteLine("'This will make a fine addition for my customers.'");
-                                SaveState("save.txt");
+                                //show item attributes blahblahblah
+                                playerInventory[e].PrintItem();
+                                bool sold = playerInventory[e].ProcessSellItem(input);
+                                //ask if they want to sell for 85% of the original price
+                                if (sold == true && shopFunds < playerInventory[e].GetCost())
+                                {
+                                    //if the shopkeeper doesn't have enough funds, then don't make the sale
+                                    Console.WriteLine("'I myself do not have enough money to take this in.'");
+                                }
+                                else if (sold == true)
+                                {
+                                    //make a new double that takes the cost of the chosen item 
+                                    //then reduces it to 85% of its original value
+                                    double sellCost = Convert.ToDouble(playerInventory[e].GetCost()) * 0.85;
+                                    //transaction
+                                    shopFunds -= Convert.ToInt32(sellCost);
+                                    playerFunds += Convert.ToInt32(sellCost);
+                                    //goods transfer, economics definition woo
+                                    ItemBuyback(e);
+                                    Console.WriteLine("'This will make a fine addition for my customers.'");
+                                    SaveState("save.txt");
+                                }
                             }
                         }
                     }
@@ -119,17 +142,20 @@ namespace RPGStore
                     if (playerInventory.Length == 0)
                     {
                         Console.WriteLine();
+                        //again just print this instead of showing literally nothing
                         Console.WriteLine("'My friend you have nothing!'");
                         satisfied = false;
                     }
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine("Type in the name of an item, or type 'exit' to exit.");
+                        //we're being straightforward with the user input
+                        Console.WriteLine("Type in the name of an item to view, or type 'exit' to exit.");
                         bool viewingItems = true;
                         while (viewingItems)
                         {
                             Console.WriteLine();
+                            SortPlayerInventoryByCost(playerInventory);
                             PrintInventory(playerInventory);
                             input = Console.ReadLine();
                             for (int e = 0; e < playerInventory.Length; e++)
@@ -246,6 +272,7 @@ namespace RPGStore
                 }
                 else
                 {
+                    //display this if the user input is invalid
                     Console.WriteLine("I can't understand what you're trying to say.");
                 }
             }
@@ -257,6 +284,29 @@ namespace RPGStore
             foreach (Item i in inv)
             {
                 Console.WriteLine(i.GetName());
+            }
+        }
+        //sort the player's inventory by cost of the item
+        public void SortPlayerInventoryByCost(Item[] playerInventory)
+        {
+            bool sorted = false;
+            while (!sorted)
+            {
+                sorted = true;
+                for (int i = 0; i < playerInventory.Length - 1; i++)
+                {
+                    //goes by highest cost to lowest cost
+                    if (playerInventory[i].GetCost() < playerInventory[i + 1].GetCost())
+                    {
+                        //store on item as a temporary item variable
+                        Item tempItem = playerInventory[i];
+                        //replace one item with the other
+                        playerInventory[i] = playerInventory[i + 1];
+                        //take the temp item and replace the other item with it
+                        playerInventory[i + 1] = tempItem;
+                        sorted = false;
+                    }
+                }
             }
         }
 
@@ -300,17 +350,19 @@ namespace RPGStore
                 playerFunds = Convert.ToInt32(reader.ReadLine());
                 for (int i = 0; i < shopInvLoad.Length; i++)
                 {
-                    //have a string for a reference only version of reader.ReadLine(), to avoid executing the function twice
+                    //have a string for a reference only string from executing reader.ReadLine() 
+                    //this is done to avoid executing the function twice in the if/else statements
                     string shopItemType = reader.ReadLine();
                     if (shopItemType == "RPGStore.Weapon")
                     {
                         //load a placeholder weapon that the streamreader will overwrite with the data stored in the save file
+                        //we do this otherwise a null object reference exception will popup, preventing anything from loading
                         shopInvLoad[i] = new Weapon("null", "null", 0, 0);
                         shopInvLoad[i].LoadItem(reader);
                     }
                     else if (shopItemType == "RPGStore.Potion")
                     {
-                        //load a placeholder weapon that the streamreader will overwrite with the data stored in the save file
+                        //same thing with the weapons, except this will overrite for potions
                         shopInvLoad[i] = new Potion("null", "null", 0);
                         shopInvLoad[i].LoadItem(reader);
                     }
@@ -338,6 +390,7 @@ namespace RPGStore
             }
             else
             {
+                //I wanted to include some lines of text as a "first-time greeting" sort of situation
                 Console.WriteLine("After a long bout of dealing with random encounters, long lines of dialogue, and poor game design; you finally turn upon an item shop to heal.");
                 Console.ReadKey();
                 Console.WriteLine("Entering the place, you are greeted by a mysterious old man in a torchlit cabin. 'Welcome, traveller' says the man, 'may I interst you in some equipment for your journeys?'");
