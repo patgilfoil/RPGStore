@@ -371,7 +371,7 @@ namespace RPGStore
                 shopInventory = shopInvLoad;
                 for (int i = 0; i < playerInvLoad.Length; i++)
                 {
-                    //same junk here, except with a new name for the string in this scope
+                    //same junk here, except with the player's inventory
                     string playerItemType = reader.ReadLine();
                     if (playerItemType == "RPGStore.Weapon")
                     {
@@ -400,7 +400,7 @@ namespace RPGStore
             }
         }
         //two separate variables for item purchases and buybacks 
-        //because doing it in the item class will make it readonly
+        //because doing it in the item class will make the arrays to transfer from readonly
         //cause c sharp really do be like that all the time
         public void ItemPurchase(int index)
         {
