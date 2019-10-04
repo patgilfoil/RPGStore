@@ -9,6 +9,7 @@ namespace RPGStore
 {
     class Item
     {
+        //this is the basis for all items within this program
         protected string _name = "";
         protected string _desc = "";
         protected int _cost = 0;

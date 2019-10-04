@@ -176,7 +176,7 @@ namespace RPGStore
                 }
                 //dev menu, you better spell onomatopoeia right, cause there's no exceptions
                 //this'll be commented out eventually
-                else if (input.ToLower() == "onomatopoeia")
+                /*else if (input.ToLower() == "onomatopoeia")
                 {
                     //bool for a loop to check for item creation
                     bool itemCreated = false;
@@ -261,7 +261,7 @@ namespace RPGStore
                             itemCreated = false;
                         }
                     }
-                }
+                }*/
                 //exit shop function
                 else if (input.ToLower() == "exit shop" || input.ToLower() == "exit")
                 {

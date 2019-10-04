@@ -11,7 +11,7 @@ namespace RPGStore
     {
         //private int for attack modifiers, a value exclusive to weapons
         private int _attackModifier = 0;
-
+        //item type reference for weapons, including the attack modifier unique to weapons
         public Weapon(string Name, string Description, int Cost, int AttackValue)
         {
             _name = Name;
