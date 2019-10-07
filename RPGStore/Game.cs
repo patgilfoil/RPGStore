@@ -65,7 +65,9 @@ namespace RPGStore
                         {
                             //display item attributes (name, cost, etc.)
                             shopInventory[e].PrintItem();
-                            bool bought = shopInventory[e].ProcessBuyItem(input);
+                            //set up a bool as a return of the ProcessBuyItem() function
+                            //the transaction is done in that function
+                            bool bought = shopInventory[e].ProcessBuyItem(input, ref playerFunds, ref shopFunds);
                             //if the users says yes to buying the item
                             if (bought == true && playerFunds < shopInventory[e].GetCost())
                             {
@@ -74,12 +76,8 @@ namespace RPGStore
                             }
                             else if (bought == true)
                             {
-                                //take the cost of the item, subtract it from the player's funds
-                                playerFunds -= shopInventory[e].GetCost();
-                                //and add it to the shop funds
-                                shopFunds += shopInventory[e].GetCost();
-                                //then give the player the item
-                                ItemPurchase(e);
+                                //give the player the item
+                                ItemTransfer(e, ref playerInventory, ref shopInventory);
                                 Console.WriteLine("'Very much a pleasure doing business with thee.'");
                                 SaveState("save.txt");
                             }
@@ -112,7 +110,9 @@ namespace RPGStore
                             {
                                 //show item attributes blahblahblah
                                 playerInventory[e].PrintItem();
-                                bool sold = playerInventory[e].ProcessSellItem(input);
+                                //another bool is set up here mimicking the purpose of the one for buying except for being for selling
+                                //like with buying, the selling function does the transaction
+                                bool sold = playerInventory[e].ProcessSellItem(input, ref shopFunds, ref playerFunds);
                                 //ask if they want to sell for 85% of the original price
                                 if (sold == true && shopFunds < playerInventory[e].GetCost())
                                 {
@@ -121,14 +121,8 @@ namespace RPGStore
                                 }
                                 else if (sold == true)
                                 {
-                                    //make a new double that takes the cost of the chosen item 
-                                    //then reduces it to 85% of its original value
-                                    double sellCost = Convert.ToDouble(playerInventory[e].GetCost()) * 0.85;
-                                    //transaction
-                                    shopFunds -= Convert.ToInt32(sellCost);
-                                    playerFunds += Convert.ToInt32(sellCost);
-                                    //goods transfer, economics definition woo
-                                    ItemBuyback(e);
+                                    //goods transfer
+                                    ItemTransfer(e, ref shopInventory, ref playerInventory);
                                     Console.WriteLine("'This will make a fine addition for my customers.'");
                                     SaveState("save.txt");
                                 }
@@ -175,7 +169,6 @@ namespace RPGStore
                     }
                 }
                 //dev menu, you better spell onomatopoeia right, cause there's no exceptions
-                //this'll be commented out eventually
                 /*else if (input.ToLower() == "onomatopoeia")
                 {
                     //bool for a loop to check for item creation
@@ -402,52 +395,29 @@ namespace RPGStore
         //two separate variables for item purchases and buybacks 
         //because doing it in the item class will make the arrays to transfer from readonly
         //cause c sharp really do be like that all the time
-        public void ItemPurchase(int index)
+        public void ItemTransfer(int index, ref Item[] recipient, ref Item[] dealer)
         {
             //temp list to store the item in
-            Item[] tempList = new Item[playerInventory.Length + 1];
+            Item[] tempList = new Item[recipient.Length + 1];
             //add said item to the player inventory
-            for (int i = 0; i < playerInventory.Length; i++)
+            for (int i = 0; i < recipient.Length; i++)
             {
-                tempList[i] = playerInventory[i];
+                tempList[i] = recipient[i];
             }
-            tempList[tempList.Length - 1] = shopInventory[index];
-            playerInventory = tempList;
+            tempList[tempList.Length - 1] = dealer[index];
+            recipient = tempList;
             //remove it from the shop inventory
-            tempList = new Item[shopInventory.Length - 1];
+            tempList = new Item[dealer.Length - 1];
             int newPos = 0;
-            for (int i = 0; i < shopInventory.Length; i++)
+            for (int i = 0; i < dealer.Length; i++)
             {
                 if (i != index)
                 {
-                    tempList[newPos] = shopInventory[i];
+                    tempList[newPos] = dealer[i];
                     newPos++;
                 }
             }
-            shopInventory = tempList;
-        }
-        public void ItemBuyback(int index)
-        {
-            //this will be largely the same as the ItemPurchase function 
-            //but shopInventory and playerInventory are flipped around
-            Item[] tempList = new Item[shopInventory.Length + 1];
-            for (int i = 0; i < shopInventory.Length; i++)
-            {
-                tempList[i] = shopInventory[i];
-            }
-            tempList[tempList.Length - 1] = playerInventory[index];
-            shopInventory = tempList;
-            tempList = new Item[playerInventory.Length - 1];
-            int newPos = 0;
-            for (int i = 0; i < playerInventory.Length; i++)
-            {
-                if (i != index)
-                {
-                    tempList[newPos] = playerInventory[i];
-                    newPos++;
-                }
-            }
-            playerInventory = tempList;
+            dealer = tempList;
         }
     }
 }

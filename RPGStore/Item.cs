@@ -41,7 +41,7 @@ namespace RPGStore
             return 0;
         }
         //function to return a bool that confirms the user's desire to purchase an item
-        public bool ProcessBuyItem(string input)
+        public bool ProcessBuyItem(string input, ref int buyerMoney, ref int sellerMoney)
         {
             Console.WriteLine();
             Console.WriteLine("Would you like to buy this item? (Yes/No)");
@@ -49,6 +49,8 @@ namespace RPGStore
             if (input.ToLower() == "yes")
             {
                 //Console.WriteLine("Whoops! Can't figure out how to reference functions from 'Game' in 'Item'");
+                buyerMoney -= _cost;
+                sellerMoney += _cost;
                 return true;
             }
             else if (input.ToLower() == "no")
@@ -64,7 +66,7 @@ namespace RPGStore
         }
         //this is largely the same as the ProcessBuyItem() function
         //with the exception of the text that shows the item's selling value
-        public bool ProcessSellItem(string input)
+        public bool ProcessSellItem(string input, ref int buyerMoney, ref int sellerMoney)
         {
             //all items are sold at 85% of their original price
             double sellCost = _cost * 0.85;
@@ -74,6 +76,9 @@ namespace RPGStore
             if (input.ToLower() == "yes")
             {
                 //Console.WriteLine("Whoops! Can't figure out how to reference functions from 'Game' in 'Item'");
+                buyerMoney -= Convert.ToInt32(sellCost);
+                sellerMoney += Convert.ToInt32(sellCost);
+
                 return true;
             }
             else if (input.ToLower() == "no")
