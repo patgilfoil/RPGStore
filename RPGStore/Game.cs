@@ -14,6 +14,7 @@ namespace RPGStore
         private Item[] playerInventory;
         private int shopFunds;
         private int playerFunds;
+
         //shop items
         private Weapon claymore = new Weapon("Well-Worn Claymore", "A hand-me-down claymore that has seen a fair share of it's battles over time", 25, 20);
         private Weapon rapier = new Weapon("Steel Rapier", "All point but not much blade", 40, 32);
@@ -32,6 +33,7 @@ namespace RPGStore
             int newPlayerFunds = 200;
             playerFunds = newPlayerFunds;
         }
+
         //this is where pretty much all of the user input goes into and where feedback comes from
         public void ProcessInput()
         {
@@ -73,6 +75,7 @@ namespace RPGStore
                             {
                                 //dont make a transaction if the player has no money
                                 Console.WriteLine("'You're quite low on cash to pay for this.'");
+
                             }
                             else if (bought == true)
                             {
@@ -270,6 +273,7 @@ namespace RPGStore
                 }
             }
         }
+
         //simple print inventory function that just calls for the items' names
         //takes an item array as an input
         public void PrintInventory(Item[] inv)
@@ -279,6 +283,7 @@ namespace RPGStore
                 Console.WriteLine(i.GetName());
             }
         }
+
         //sort the player's inventory by cost of the item
         public void SortPlayerInventoryByCost(Item[] playerInventory)
         {
@@ -303,6 +308,7 @@ namespace RPGStore
             }
         }
 
+        //save game function, calls upon SaveItem() for each item
         public void SaveState(string path)
         {
             StreamWriter writer = File.CreateText(path);
@@ -328,6 +334,7 @@ namespace RPGStore
             writer.Close();
         }
 
+        //load game function, only used at startup
         public void LoadState(string path)
         {
             //we check to see if a save file exists before we load anything
@@ -392,9 +399,9 @@ namespace RPGStore
                 Console.ReadKey();
             }
         }
-        //two separate variables for item purchases and buybacks 
-        //because doing it in the item class will make the arrays to transfer from readonly
-        //cause c sharp really do be like that all the time
+
+        //function for transferring the items to the different inventories
+        //ref item arrays are used so it directly references the arrays to be used
         public void ItemTransfer(int index, ref Item[] recipient, ref Item[] dealer)
         {
             //temp list to store the item in
