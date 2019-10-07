@@ -5,8 +5,10 @@
 | RPGStore Documentation |
 
 ## I. Requirements
+
 1. Description of Problem
-    - **RPGStore**
+
+    - Name: **RPGStore**
     - Using your knowledge of stores in modern RPGs, create a RPG Store program using the C# language.
     - The program will maintain an array of items for both the store and the player, and allow the player to purchase items from, or sell items to the store. The player will interact through text commands to perform actions with the storekeeper. The inventories and funds of both the player and the store will be saved to and loaded from a text file. The program must also demonstrate multiple levels of inheritance with items from a base 'Item' class. 
 
@@ -41,9 +43,59 @@
 2. _User Interface_
 
 3. ### Object Information
-    ***File:*** Item.cs  
-        Description: The base class for both types of items: Weapons and Potions  
+    ***File:*** Item.cs
+    - Description: The base class that contains attributes and functions for both types of items.
+    - Attributes
+        - Name: _name
+            - Description: Variable that stores a string for an item name.
+            - Type: protected string
 
-        **Attributes**  
-            Name: _name
-            Description: Variable that stores a string for an item name
+        - Name: _desc
+            - Description: Variable that stores a string for an item description.
+            - Type: protected string
+
+        - Name: _cost
+            - Description: Variable that stores an item cost for purchases.
+            - Type: protected int
+
+    - Operations
+        - Name: PrintItem
+            - Description: Function that prints out all of the variables an item has, vitural function.
+            - Visibility: Public
+
+        - Name: GetName
+            - Description: Retrieves the name of an item.
+            - Return type: string
+            - Visibility: Public
+
+        - Name: GetDesc
+            - Description: Retrieves the description of an item.
+            - Return type: string
+            - Visibility: Public
+
+        - Name: GetCost
+            - Description: Retrieves the cost of an item.
+            - Return type: int
+            - Visibility: Public
+
+        - Name: ProcessBuyItem
+            - Description: Function that processes input for buying an item.
+            - Arguments: string input, ref int buyerMoney, ref int sellerMoney
+            - Return type: bool
+            - Visibility: Public
+
+        - Name: ProcessSellItem
+            - Description: Function that processes input for selling an item.
+            - Arguments: string input, ref int, buyerMoney, ref int sellerMoney
+            - Return type: bool
+            - Visibility: Public
+
+        - Name: SaveItem
+            - Description: Function that saves an item to a text file.
+            - Arguments: StreamWriter writer
+            - Visibility: Public
+
+        - Name: LoadItem
+            - Desctiption: Function that loads an item and it's information from a text file.
+            - Arguments: StreamReader reader
+            - Visibility: Public

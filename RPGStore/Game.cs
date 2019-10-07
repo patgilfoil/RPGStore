@@ -102,7 +102,7 @@ namespace RPGStore
                         //show the player inventory, then read next line for input
                         Console.WriteLine();
                         Console.WriteLine("'Let's have a look-see at your inventory shall we?'");
-                        SortPlayerInventoryByCost(playerInventory);
+                        SortInventoryByCost(ref playerInventory);
                         PrintInventory(playerInventory);
                         input = Console.ReadLine();
                         //same item lookup method as buying except with player inventory
@@ -152,7 +152,7 @@ namespace RPGStore
                         while (viewingItems)
                         {
                             Console.WriteLine();
-                            SortPlayerInventoryByCost(playerInventory);
+                            SortInventoryByCost(ref playerInventory);
                             PrintInventory(playerInventory);
                             input = Console.ReadLine();
                             for (int e = 0; e < playerInventory.Length; e++)
@@ -285,7 +285,7 @@ namespace RPGStore
         }
 
         //sort the player's inventory by cost of the item
-        public void SortPlayerInventoryByCost(Item[] playerInventory)
+        public void SortInventoryByCost(ref Item[] inventory)
         {
             bool sorted = false;
             while (!sorted)
@@ -306,6 +306,33 @@ namespace RPGStore
                     }
                 }
             }
+        }
+
+        //function for transferring the items to the different inventories
+        //ref item arrays are used so it directly references the arrays to be used
+        public void ItemTransfer(int index, ref Item[] recipient, ref Item[] dealer)
+        {
+            //temp list to store the item in
+            Item[] tempList = new Item[recipient.Length + 1];
+            //add said item to the player inventory
+            for (int i = 0; i < recipient.Length; i++)
+            {
+                tempList[i] = recipient[i];
+            }
+            tempList[tempList.Length - 1] = dealer[index];
+            recipient = tempList;
+            //remove it from the shop inventory
+            tempList = new Item[dealer.Length - 1];
+            int newPos = 0;
+            for (int i = 0; i < dealer.Length; i++)
+            {
+                if (i != index)
+                {
+                    tempList[newPos] = dealer[i];
+                    newPos++;
+                }
+            }
+            dealer = tempList;
         }
 
         //save game function, calls upon SaveItem() for each item
@@ -398,33 +425,6 @@ namespace RPGStore
                 Console.WriteLine("Knowing after the several encounters you've faced along the trails, you tell yourself to accept the man's openness to you and step forward to the counter.");
                 Console.ReadKey();
             }
-        }
-
-        //function for transferring the items to the different inventories
-        //ref item arrays are used so it directly references the arrays to be used
-        public void ItemTransfer(int index, ref Item[] recipient, ref Item[] dealer)
-        {
-            //temp list to store the item in
-            Item[] tempList = new Item[recipient.Length + 1];
-            //add said item to the player inventory
-            for (int i = 0; i < recipient.Length; i++)
-            {
-                tempList[i] = recipient[i];
-            }
-            tempList[tempList.Length - 1] = dealer[index];
-            recipient = tempList;
-            //remove it from the shop inventory
-            tempList = new Item[dealer.Length - 1];
-            int newPos = 0;
-            for (int i = 0; i < dealer.Length; i++)
-            {
-                if (i != index)
-                {
-                    tempList[newPos] = dealer[i];
-                    newPos++;
-                }
-            }
-            dealer = tempList;
         }
     }
 }
