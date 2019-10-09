@@ -1,0 +1,22 @@
+3
+1
+1003
+197
+RPGStore.Potion
+Healing Potion
+A basic healing potion crafted from everyday ingredients. Heals 25 HP.
+15
+RPGStore.Potion
+Buff-Up Potion
+A potion that fills the user with tremendous amounts of energy, boosting their attack by 20%
+25
+RPGStore.Weapon
+Steel Rapier
+All point but not much blade
+40
+32
+RPGStore.Weapon
+Well-Worn Claymore
+A hand-me-down claymore that has seen a fair share of it's battles over time
+25
+20
