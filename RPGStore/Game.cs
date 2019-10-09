@@ -16,8 +16,8 @@ namespace RPGStore
         private int playerFunds;
 
         //shop items
-        private Weapon claymore = new Weapon("Well-Worn Claymore", "A hand-me-down claymore that has seen a fair share of it's battles over time", 25, 20);
-        private Weapon rapier = new Weapon("Steel Rapier", "All point but not much blade", 40, 32);
+        private Item claymore = new Weapon("Well-Worn Claymore", "A hand-me-down claymore that has seen a fair share of it's battles over time", 25, 20);
+        private Item rapier = new Weapon("Steel Rapier", "All point but not much blade", 40, 32);
         private Item healPotion = new Potion("Healing Potion", "A basic healing potion crafted from everyday ingredients. Heals 25 HP.", 15);
         private Item superPotion = new Potion("Buff-Up Potion", "A potion that fills the user with tremendous amounts of energy, boosting their attack by 20%", 25);
 
@@ -39,13 +39,13 @@ namespace RPGStore
         {
             LoadState("save.txt");
             Console.WriteLine("'Ah, welcome traveler, to my shoppe.'");
+            Console.WriteLine();
             bool satisfied = false;
             //this one string is for all user input, since there is no need for other strings to replace it
             string input;
             while (!satisfied)
             {
                 //show how much currency the user has, and their current options
-                Console.WriteLine();
                 Console.WriteLine("Currency: " + playerFunds);
                 Console.WriteLine("(Buy Item/Sell Item/View Inventory/Exit Shop)");
                 input = Console.ReadLine();
@@ -54,7 +54,7 @@ namespace RPGStore
                 if (input.ToLower() == "buy item" || input.ToLower() == "buy")
                 {
                     //show the user the shop inventory so they can see what they can buy
-                    Console.WriteLine();
+                    Console.Clear();
                     Console.WriteLine("'Let me show you my wares.'");
                     PrintInventory(shopInventory);
                     input = Console.ReadLine();
@@ -75,15 +75,23 @@ namespace RPGStore
                             {
                                 //dont make a transaction if the player has no money
                                 Console.WriteLine("'You're quite low on cash to pay for this.'");
+                                Console.ReadKey();
 
                             }
                             else if (bought == true)
                             {
                                 //give the player the item
                                 ItemTransfer(e, ref playerInventory, ref shopInventory);
+                                Console.WriteLine();
                                 Console.WriteLine("'Very much a pleasure doing business with thee.'");
                                 SaveState("save.txt");
+                                Console.ReadKey();
+                                Console.Clear();
                             }
+                        }
+                        else
+                        {
+                            Console.Clear();
                         }
                     }
                 }
@@ -96,11 +104,13 @@ namespace RPGStore
                         //prints this if you have nothing in your inventory
                         Console.WriteLine("'My friend you have nothing!'");
                         satisfied = false;
+                        Console.ReadKey();
+                        Console.Clear();
                     }
                     else
                     {
                         //show the player inventory, then read next line for input
-                        Console.WriteLine();
+                        Console.Clear();
                         Console.WriteLine("'Let's have a look-see at your inventory shall we?'");
                         SortInventoryByCost(ref playerInventory);
                         PrintInventory(playerInventory);
@@ -126,9 +136,16 @@ namespace RPGStore
                                 {
                                     //goods transfer
                                     ItemTransfer(e, ref shopInventory, ref playerInventory);
+                                    Console.WriteLine();
                                     Console.WriteLine("'This will make a fine addition for my customers.'");
                                     SaveState("save.txt");
+                                    Console.ReadKey();
+                                    Console.Clear();
                                 }
+                            }
+                            else
+                            {
+                                Console.Clear();
                             }
                         }
                     }
@@ -142,16 +159,17 @@ namespace RPGStore
                         //again just print this instead of showing literally nothing
                         Console.WriteLine("'My friend you have nothing!'");
                         satisfied = false;
+                        Console.ReadKey();
+                        Console.Clear();
                     }
                     else
                     {
-                        Console.WriteLine();
-                        //we're being straightforward with the user input
-                        Console.WriteLine("Type in the name of an item to view, or type 'exit' to exit.");
                         bool viewingItems = true;
                         while (viewingItems)
                         {
-                            Console.WriteLine();
+                            Console.Clear();
+                            //we're being straightforward with the user input
+                            Console.WriteLine("Type in the name of an item to view, or type 'exit' to exit.");
                             SortInventoryByCost(ref playerInventory);
                             PrintInventory(playerInventory);
                             input = Console.ReadLine();
@@ -162,22 +180,25 @@ namespace RPGStore
                                 {
                                     playerInventory[e].PrintItem();
                                     Console.ReadKey();
+                                    Console.Clear();
                                 }
                                 else if (input.ToLower() == "exit")
                                 {
                                     viewingItems = false;
+                                    Console.Clear();
                                 }
                             }
                         }
                     }
                 }
                 //dev menu, you better spell onomatopoeia right, cause there's no exceptions
-                /*else if (input.ToLower() == "onomatopoeia")
+                else if (input.ToLower() == "onomatopoeia")
                 {
                     //bool for a loop to check for item creation
                     bool itemCreated = false;
-                    Console.WriteLine("WOW YOU ACCESSED THE SECRET DEV MENU!");
-                    Console.WriteLine("What type of item are you creating?");
+                    Console.Clear();
+                    Console.WriteLine("You accessed the secret developer menu!");
+                    Console.WriteLine("What type of item are you creating? (Weapon/Potion)");
                     input = Console.ReadLine();
                     while (!itemCreated)
                     {
@@ -190,32 +211,58 @@ namespace RPGStore
                             Console.Write("Description: ");
                             string newDesc = Console.ReadLine();
                             Console.Write("Cost (Must be a number value): ");
-                            int newCost = Convert.ToInt32(Console.ReadLine());
-                            Console.Write("Attack Modifier (Must be a number value): ");
-                            int newAttack = Convert.ToInt32(Console.ReadLine());
-                            //create the item and show them how it looks
-                            Item newWeaponItem = new Weapon(newName, newDesc, newCost, newAttack);
-                            newWeaponItem.PrintItem();
-                            //ask if it's how they wanted it to be
-                            Console.WriteLine("Are you okay with this? (Yes/No)");
-                            input = Console.ReadLine();
-                            if (input.ToLower() == "yes")
+                            int newCost;
+                            //check if the value they entered was actually an int and not a string
+                            bool isCostInt = Int32.TryParse(Console.ReadLine(),out newCost);
+                            //if the check returns false, meaning it is a string, restart the creation process
+                            if (isCostInt == false)
                             {
-                                //place the item in the shop
-                                Item[] tempList = new Item[shopInventory.Length + 1];
-                                for (int i = 0; i < shopInventory.Length; i++)
-                                {
-                                    tempList[i] = shopInventory[i];
-                                }
-                                tempList[tempList.Length - 1] = newWeaponItem;
-                                shopInventory = tempList;
-                                Console.WriteLine("New item has been added to the shop.");
-                                SaveState("save.txt");
-                            }
-                            else if (input.ToLower() == "no")
-                            {
-                                //loop back to the beginning
+                                Console.Clear();
+                                Console.WriteLine("Cost must be an number value.");
                                 itemCreated = false;
+                            }
+                            //otherwise if the cheack returns true
+                            else if (isCostInt == true)
+                            {
+                                Console.Write("Attack Modifier (Must be a number value): ");
+                                int newAttack;
+                                //have the same check for attack modifier
+                                bool isAttackInt = Int32.TryParse(Console.ReadLine(), out newAttack);
+                                if (isAttackInt == false)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("Attack Modifier must be an number value.");
+                                    itemCreated = false;
+                                }
+                                else if (isAttackInt == true)
+                                {
+                                    //create the item and show them how it looks
+                                    Item newWeaponItem = new Weapon(newName, newDesc, newCost, newAttack);
+                                    newWeaponItem.PrintItem();
+                                    //ask if it's how they wanted it to be
+                                    Console.WriteLine("Are you okay with this? (Yes/No)");
+                                    input = Console.ReadLine();
+                                    if (input.ToLower() == "yes")
+                                    {
+                                        //place the item in the shop
+                                        Item[] tempList = new Item[shopInventory.Length + 1];
+                                        for (int i = 0; i < shopInventory.Length; i++)
+                                        {
+                                            tempList[i] = shopInventory[i];
+                                        }
+                                        tempList[tempList.Length - 1] = newWeaponItem;
+                                        shopInventory = tempList;
+                                        Console.WriteLine("New item has been added to the shop.");
+                                        SaveState("save.txt");
+                                        Console.ReadKey();
+                                        Console.Clear();
+                                    }
+                                    else if (input.ToLower() == "no")
+                                    {
+                                        //loop back to the beginning
+                                        itemCreated = false;
+                                    }
+                                }
                             }
                         }
                         else if (input.ToLower() == "potion")
@@ -226,38 +273,55 @@ namespace RPGStore
                             Console.Write("Description: ");
                             string newDesc = Console.ReadLine();
                             Console.Write("Cost (Must be a number value): ");
-                            int newCost = Convert.ToInt32(Console.ReadLine());
-                            //show them the item
-                            Item newPotionItem = new Potion(newName, newDesc, newCost);
-                            newPotionItem.PrintItem();
-                            //ask if it be how it should be
-                            Console.WriteLine("Are you okay with this? (Yes/No)");
-                            input = Console.ReadLine();
-                            if (input.ToLower() == "yes")
+                            int newCost;
+                            //check to see if the vost value is actually an int
+                            bool isCostInt = Int32.TryParse(Console.ReadLine(), out newCost);
+                            //if it's not an int, restart the process
+                            if (isCostInt == false)
                             {
-                                //add it to the shop
-                                Item[] tempList = new Item[shopInventory.Length + 1];
-                                for (int i = 0; i < shopInventory.Length; i++)
-                                {
-                                    tempList[i] = shopInventory[i];
-                                }
-                                tempList[tempList.Length - 1] = newPotionItem;
-                                shopInventory = tempList;
-                                Console.WriteLine("New item has been added to the shop.");
-                                SaveState("save.txt");
-                            }
-                            else if (input.ToLower() == "no")
-                            {
-                                //loop back to the beginning
+                                Console.Clear();
+                                Console.WriteLine("Cost must be an number value.");
                                 itemCreated = false;
+                            }
+                            else if (isCostInt == true)
+                            {
+                                //show them the item
+                                Item newPotionItem = new Potion(newName, newDesc, newCost);
+                                newPotionItem.PrintItem();
+                                //ask if it be how it should be
+                                Console.WriteLine("Are you okay with this? (Yes/No)");
+                                input = Console.ReadLine();
+                                if (input.ToLower() == "yes")
+                                {
+                                    //add it to the shop
+                                    Item[] tempList = new Item[shopInventory.Length + 1];
+                                    for (int i = 0; i < shopInventory.Length; i++)
+                                    {
+                                        tempList[i] = shopInventory[i];
+                                    }
+                                    tempList[tempList.Length - 1] = newPotionItem;
+                                    shopInventory = tempList;
+                                    Console.WriteLine("New item has been added to the shop.");
+                                    SaveState("save.txt");
+                                    Console.ReadKey();
+                                    Console.Clear();
+                                }
+                                else if (input.ToLower() == "no")
+                                {
+                                    //loop back to the beginning
+                                    itemCreated = false;
+                                }
                             }
                         }
                         else
                         {
+                            Console.WriteLine("Item must be either a Weapon or Potion.");
+                            Console.ReadKey();
                             itemCreated = false;
+                            Console.Clear();
                         }
                     }
-                }*/
+                }
                 //exit shop function
                 else if (input.ToLower() == "exit shop" || input.ToLower() == "exit")
                 {
@@ -424,6 +488,8 @@ namespace RPGStore
                 Console.ReadKey();
                 Console.WriteLine("Knowing after the several encounters you've faced along the trails, you tell yourself to accept the man's openness to you and step forward to the counter.");
                 Console.ReadKey();
+                //if the user isn't interested in anything and exits w/o using the exit function, we don't want to display this dialogue again.
+                SaveState("save.txt");
             }
         }
     }

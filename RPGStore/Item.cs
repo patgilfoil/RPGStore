@@ -17,6 +17,7 @@ namespace RPGStore
         //item print function, self explanatory, overridden for weapons
         public virtual void PrintItem()
         {
+            Console.WriteLine();
             Console.WriteLine("Name: " + _name);
             Console.WriteLine(_desc);
             Console.WriteLine("Cost: " + _cost);
@@ -46,6 +47,9 @@ namespace RPGStore
             Console.WriteLine();
             Console.WriteLine("Would you like to buy this item? (Yes/No)");
             input = Console.ReadLine();
+            //we generally want to return true if the player says yes
+            //while this will return true, it wont make a transaction/exchange in the first place 
+            //because a similar check is in the buy function in Game
             if (input.ToLower() == "yes" && buyerMoney < _cost)
             {
                 return true;
@@ -56,6 +60,7 @@ namespace RPGStore
                 sellerMoney += _cost;
                 return true;
             }
+            //in cases where the player says no or an invalid, then cancel the transaction/exchange
             else if (input.ToLower() == "no")
             {
                 return false;

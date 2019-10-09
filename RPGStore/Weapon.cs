@@ -30,6 +30,7 @@ namespace RPGStore
         //item print override for weapons that displays the attack modifier
         public override void PrintItem()
         {
+            Console.WriteLine();
             Console.WriteLine("Name: " + _name);
             Console.WriteLine(_desc);
             Console.WriteLine("Attack Value: " + _attackModifier);
