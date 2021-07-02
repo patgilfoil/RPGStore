@@ -1,3 +1,7 @@
+This was initially created as part of the Introduction to C# assessment during the first year at AIE. As such, it is very basic.
+
+
+
 First, you must double click on the program labeled "RPGStore.exe"
 Once opened for the first time, a short monologue will be printed out within the command window.
 To progress through the dialoge you must press a key on your keyboard. It isn't specific on which key you press, but it will wait on any key to be pressed to continue. 
